@@ -1,5 +1,7 @@
 package com.example.dmc.activity
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,6 +66,7 @@ class RegisterActivity : ComponentActivity() {
 fun RegisterScreen() {
     var NIM by remember { mutableStateOf ("") }
     var isFemale by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 //    var username by remember { mutableStateOf("") }
 
     Column (
@@ -155,6 +159,8 @@ fun RegisterScreen() {
 
         Button(
             onClick = {
+                val intent = Intent (context, HomeActivity::class.java)
+                context.startActivity(intent)
                 println("Tombol di Klik!")
             },
             modifier = Modifier.fillMaxWidth()
