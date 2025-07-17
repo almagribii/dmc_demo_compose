@@ -76,7 +76,7 @@ fun LoginActivty() {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 8.dp)
         )
 
         OutlinedTextField(
@@ -105,54 +105,50 @@ fun LoginActivty() {
             horizontalArrangement = Arrangement.SpaceAround, // Memberi jarak merata di antara elemen
             verticalAlignment = Alignment.CenterVertically // Elemen sejajar di tengah secara vertikal
         ) {
-            Icon(Icons.Default.Home, contentDescription = "Home")
-            Text(text = "Beranda",
+//            Icon(Icons.Default.Home, contentDescription = "Home")
+            Text(
+                text = "Apakah Anda Baru Pertama Kali Ke DMC",
+                fontSize = 12.sp,
                 modifier = Modifier.clickable {
                 val intent = Intent(context, RegisterActivity::class.java)
                 context.startActivity(intent)
             })
-            Icon(Icons.Default.Settings, contentDescription = "Settings")
+//            Icon(Icons.Default.Settings, contentDescription = "Settings")
         }
-        Box(
-            modifier = Modifier
-                .size(200.dp) // Mengatur ukuran Box
-                .background(Color.Gray),
-            contentAlignment = Alignment.Center // Memusatkan semua konten di dalam Box
-        ) {
-            // Ini akan jadi lapisan paling bawah
-            Text(
-                "Background",
-                color = Color.LightGray,
-                fontSize = 24.sp,
-                    )
-            // Ini akan jadi lapisan di atas "Background"
-            Text("Overlay Text", color = Color.White, fontSize = 18.sp)
-        }
+//        Box(
+//            modifier = Modifier
+//                .size(200.dp) // Mengatur ukuran Box
+//                .background(Color.Gray),
+//            contentAlignment = Alignment.Center // Memusatkan semua konten di dalam Box
+//        ) {
+//            // Ini akan jadi lapisan paling bawah
+//            Text(
+//                "Background",
+//                color = Color.LightGray,
+//                fontSize = 24.sp,
+//                    )
+//            // Ini akan jadi lapisan di atas "Background"
+//            Text("Overlay Text", color = Color.White, fontSize = 18.sp)
+//        }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp) // Jarak antar item
-        ) {
-            items(1) { index -> // Mengulang 100 kali
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                ) {
-                    Text(
-                        text = "Item ke-$index",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-
-        Text(
-            text = ""
-
-        )
-
+//        LazyColumn(
+//            modifier = Modifier.fillMaxSize(),
+//            contentPadding = PaddingValues(16.dp),
+//            verticalArrangement = Arrangement.spacedBy(8.dp) // Jarak antar item
+//        ) {
+//            items(1) { index -> // Mengulang 100 kali
+//                Card(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(80.dp)
+//                ) {
+//                    Text(
+//                        text = "Item ke-$index",
+//                        modifier = Modifier.padding(16.dp)
+//                    )
+//                }
+//            }
+//        }
     }
 }
 
