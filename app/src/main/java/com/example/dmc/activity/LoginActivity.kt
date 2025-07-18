@@ -121,7 +121,7 @@ fun LoginScreen() {
                                 loginResponse?.let {
                                     Toast.makeText(context, "Login Berhasil: ${it.message}", Toast.LENGTH_LONG).show()
                                     // Arahkan ke HomeActivity atau layar berikutnya
-                                    val intent = Intent(context, RegisterActivity::class.java)
+                                    val intent = Intent(context, HomeActivity::class.java)
                                     context.startActivity(intent)
                                     // Anda mungkin ingin finish() LoginActivity agar tidak bisa kembali
                                     // (context as? ComponentActivity)?.finish()
