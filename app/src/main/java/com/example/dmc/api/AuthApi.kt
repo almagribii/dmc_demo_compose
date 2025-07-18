@@ -8,20 +8,26 @@ import retrofit2.Call
 import retrofit2.http.POST
 
 interface AuthApi {
-    @POST ("pasien")
-    fun login(@Body request: LoginRequest): Call<LoginRequest>
+    @POST ("auth/login")
+    fun login(@Body request: LoginRequest): Call<LoginResponse>
+
+    @POST("pasien")
+    fun registerPasien(@Body pasien: Pasien): Call<Pasien>
 }
 
-
-
 data class Pasien(
-    val id : Long,
+    val id : Long? = null,
     val nama : String,
     val tanggalLahir : String,
     val alamat: String,
     val nomorTelepon: String,
     val isMahasiswaUnida : Boolean,
     val nim : String
+)
+
+data class LoginRequest(
+    val nim: String,
+    val tanggalLahir: String
 )
 
 data class RekamMedis(
@@ -38,7 +44,13 @@ data class Obat(
     val stok: Int
 )
 
-data class LoginRequest(
-    val nim: String,
-    val tanggalLahir: String
+data class LoginResponse(
+    @SerializedName("message") val message: String,
+    @SerializedName("pasienId") val pasienId: Long,
+    @SerializedName("nama") val nama: String,
+    @SerializedName("nim") val nim: String
+)
+
+data class RegisterResponse(
+    val message: String
 )
