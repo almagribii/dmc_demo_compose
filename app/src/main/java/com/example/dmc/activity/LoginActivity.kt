@@ -1,43 +1,29 @@
-
 import android.content.Intent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,14 +31,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dmc.activity.RegisterActivity
+import com.example.dmc.api.LoginRequest
 import com.example.dmc.ui.theme.DMCTheme
+import com.example.dmc.util.RetrofitAuth
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun LoginActivty() {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var nim by remember { mutableStateOf("") }
+    var tanggalLahir by remember { mutableStateOf("") }
+    var loginMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -69,8 +60,8 @@ fun LoginActivty() {
         )
 
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
+            value = nim,
+            onValueChange = { nim = it },
             label = { Text("Username") },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email Icon") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -80,8 +71,8 @@ fun LoginActivty() {
         )
 
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = tanggalLahir,
+            onValueChange = { tanggalLahir = it },
             label = { Text("Password") },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock Icon") },
             visualTransformation = PasswordVisualTransformation(),
@@ -92,12 +83,43 @@ fun LoginActivty() {
         )
 
         Button(
-            onClick = {},
+            onClick = {
+                if (nim.isNotBlank() && tanggalLahir.isNotBlank()) {
+                    val loginRequest = LoginRequest(nim, tanggalLahir)
+                    RetrofitAuth.instance.login(loginRequest)
+                        .enqueue(object : Callback<LoginRequest> {
+                            override fun onResponse(
+                                p0: Call<LoginRequest>,
+                                p1: Response<LoginRequest>
+                            ) {
+                                if (p1.isSuccessful) {
+                                    val lognRespone = p1.body()
+                                    lognRespone?.let {
+                                        loginMessage = "Login Berhasil! Selamat Datang"
+                                    }
+                                } else {
+                                    val errorBody = p1.errorBody()?.string()
+                                    loginMessage =
+                                        "Login Gagal: ${errorBody ?: "Terjadi Kesalahan"}"
+                                }
+                            }
+
+                            override fun onFailure(p0: Call<LoginRequest>, p1: Throwable) {
+                                loginMessage = "Error Jaringan: ${p1.message}"
+                            }
+                        })
+                } else {
+                    loginMessage = "NIM dan Tanggal Lahir tidak boleh Kosong"
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login", fontSize = 18.sp)
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = loginMessage, color = MaterialTheme.colorScheme.error)
         Row(
             modifier = Modifier
                 .fillMaxWidth() // Memenuhi seluruh lebar yang tersedia
@@ -105,50 +127,14 @@ fun LoginActivty() {
             horizontalArrangement = Arrangement.SpaceAround, // Memberi jarak merata di antara elemen
             verticalAlignment = Alignment.CenterVertically // Elemen sejajar di tengah secara vertikal
         ) {
-//            Icon(Icons.Default.Home, contentDescription = "Home")
             Text(
                 text = "Apakah Anda Baru Pertama Kali Ke DMC",
                 fontSize = 12.sp,
                 modifier = Modifier.clickable {
-                val intent = Intent(context, RegisterActivity::class.java)
-                context.startActivity(intent)
-            })
-//            Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    val intent = Intent(context, RegisterActivity::class.java)
+                    context.startActivity(intent)
+                })
         }
-//        Box(
-//            modifier = Modifier
-//                .size(200.dp) // Mengatur ukuran Box
-//                .background(Color.Gray),
-//            contentAlignment = Alignment.Center // Memusatkan semua konten di dalam Box
-//        ) {
-//            // Ini akan jadi lapisan paling bawah
-//            Text(
-//                "Background",
-//                color = Color.LightGray,
-//                fontSize = 24.sp,
-//                    )
-//            // Ini akan jadi lapisan di atas "Background"
-//            Text("Overlay Text", color = Color.White, fontSize = 18.sp)
-//        }
-
-//        LazyColumn(
-//            modifier = Modifier.fillMaxSize(),
-//            contentPadding = PaddingValues(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(8.dp) // Jarak antar item
-//        ) {
-//            items(1) { index -> // Mengulang 100 kali
-//                Card(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(80.dp)
-//                ) {
-//                    Text(
-//                        text = "Item ke-$index",
-//                        modifier = Modifier.padding(16.dp)
-//                    )
-//                }
-//            }
-//        }
     }
 }
 
