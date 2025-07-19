@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast // Pastikan ini diimpor
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
@@ -15,10 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dmc.R
 import com.example.dmc.ui.theme.DMCTheme
 
 class HomeActivity : ComponentActivity() {
@@ -74,7 +77,7 @@ fun HomeScreen(
     onLogoutClick: () -> Unit = {},
     onViewMedicalRecordsClick: () -> Unit = {},
     onAppointmentClick: () -> Unit = {},
-    onMedicineInfoClick: () -> Unit = {}
+    onMedicineInfoClick: () -> Unit = {},
 ) {
     val context = LocalContext.current // Tetap ada untuk Intent dan DatePickerDialog jika dipakai
     // applicationContext sudah diambil di HomeActivity dan diberikan ke Composable ini melalui callback
@@ -109,15 +112,40 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Apa yang ingin Anda lakukan hari ini?",
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
+            Box(
+              modifier = Modifier
+                  .height(160.dp)
+            ){
+                Card(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding()
+                ) {
+                    Row (
+                    ){
+                        Text(
+                            text = "Selamat Pagi ! Semuanya, Bagaimana Kabar kalian",
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Image(
+                            painter = painterResource(R.drawable.person),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .offset(y = 40.dp)
+                        )
+                    }
+
+
+                }
+
+            }
+
 
             Button(
                 onClick = onViewMedicalRecordsClick,
