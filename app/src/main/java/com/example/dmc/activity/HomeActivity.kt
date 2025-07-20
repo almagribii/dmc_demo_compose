@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
@@ -125,20 +126,23 @@ fun HomeScreen(
                         .padding()
                 ) {
                     Row (
+                        modifier = Modifier.fillMaxSize()
                     ){
-                        Text(
-                            text = "Selamat Pagi ! Semuanya, Bagaimana Kabar kalian",
-                            fontSize = 20.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f)
-                        )
+
                         Image(
                             painter = painterResource(R.drawable.person),
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .offset(y = 40.dp)
+                                .offset(y = 20.dp)
                         )
+                        Text(
+                            text = "Selamat Pagi ! Semuanya, Bagaimana Kabar kalian",
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f).padding(top = 75.dp).padding(start = 8.dp)
+                        )
+
                     }
 
 
