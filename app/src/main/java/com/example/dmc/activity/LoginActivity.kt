@@ -107,7 +107,7 @@ fun LoginScreen() {
         OutlinedTextField(
             value = nim,
             onValueChange = { nim = it },
-            label = { Text("NIM (Username)") },
+            label = { Text("Username") },
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = "NIM Icon") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier
@@ -118,7 +118,7 @@ fun LoginScreen() {
         OutlinedTextField(
             value = tanggalLahir,
             onValueChange = { tanggalLahir = it },
-            label = { Text("Tanggal Lahir (Password - YYYY-MM-DD)") }, // Label tetap informatif
+            label = { Text("Password") }, // Label tetap informatif
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Password Icon") }, // Ikon Lock
             visualTransformation = PasswordVisualTransformation(), // Tetap disembunyikan
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), // Keyboard password

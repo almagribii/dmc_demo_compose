@@ -6,7 +6,9 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.Call
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AuthApi {
     @POST ("auth/login")
@@ -21,8 +23,11 @@ interface AuthApi {
     @GET("obat")
     fun getObat() : Call<List<Obat>>
 
-    @GET("rekam-medis/{pasienId}")
+    @GET("rekam-medis/pasien/{pasienId}")
     fun getRekamMedisByPasienId(@Path("pasienId") pasienId: Long) : Call<List<RekamMedis>>
+
+    @PUT("obat/{id}/dispense")
+    fun dispenseObat(@Path("id") id: Long, @Query("quantity") quantity:Int): Call<Obat>
 }
 
 data class Pasien(

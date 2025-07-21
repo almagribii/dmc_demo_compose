@@ -9,10 +9,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-//import androidx.compose.material.icons.filled.Description
-//import androidx.compose.material.icons.filled.LocalHospital
-//import androidx.compose.material.icons.filled.MedicalServices
-//import androidx.compose.material.icons.filled.Note
+// Import ikon-ikon spesifik untuk form rekam medis
+import androidx.compose.material.icons.filled.Description // Untuk Keluhan
+import androidx.compose.material.icons.filled.MedicalServices // Untuk Diagnosa
+import androidx.compose.material.icons.filled.Build // Untuk Tindakan (atau Healing)
+import androidx.compose.material.icons.filled.ReceiptLong // Untuk Resep
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,12 +30,18 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * AddMedicalRecordActivity adalah Activity untuk menambahkan entri rekam medis baru.
+ * Menerima ID dan nama pasien dari Activity sebelumnya (HomeActivity).
+ */
 class AddMedicalRecordActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Ambil pasienId dari Intent
+        // Ambil ID Pasien dari Intent
         val pasienId = intent.getLongExtra("PASIEN_ID", -1L) // Default -1L jika tidak ada ID
+        // Ambil Nama Pasien dari Intent
+        val patientName = intent.getStringExtra("PATIENT_NAME") ?: "Pasien" // Default "Pasien" jika tidak ada nama
 
         setContent {
             DMCTheme {
@@ -41,13 +49,15 @@ class AddMedicalRecordActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    // Hanya tampilkan layar jika ID pasien valid
                     if (pasienId != -1L) {
                         AddMedicalRecordScreen(
                             pasienId = pasienId,
-                            onBackClick = { finish() }
+                            patientName = patientName, // Teruskan nama pasien ke Composable
+                            onBackClick = { finish() } // Callback untuk kembali
                         )
                     } else {
-                        // Tampilkan pesan error jika ID pasien tidak valid
+                        // Tampilkan pesan error jika ID pasien tidak ditemukan
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text("Error: ID Pasien tidak ditemukan.", color = MaterialTheme.colorScheme.error)
                         }
@@ -58,20 +68,25 @@ class AddMedicalRecordActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Composable untuk UI form penambahan rekam medis.
+ */
+@OptIn(ExperimentalMaterial3Api::class) // Diperlukan untuk komponen Material3
 @Composable
 fun AddMedicalRecordScreen(
-    pasienId: Long, // Terima ID Pasien sebagai parameter
-    onBackClick: () -> Unit = {}
+    pasienId: Long, // ID Pasien
+    patientName: String = "Pasien", // Nama Pasien (untuk tampilan di UI)
+    onBackClick: () -> Unit = {} // Callback untuk tombol kembali
 ) {
+    // States untuk menyimpan inputan form
     var keluhan by remember { mutableStateOf("") }
     var diagnosa by remember { mutableStateOf("") }
     var tindakan by remember { mutableStateOf("") }
     var resep by remember { mutableStateOf("") }
-    var submitMessage by remember { mutableStateOf("") }
+    var submitMessage by remember { mutableStateOf("") } // Pesan feedback setelah submit
 
     val context = LocalContext.current
-    val applicationContext = context.applicationContext
+    val applicationContext = context.applicationContext // Dapatkan applicationContext yang stabil
 
     Scaffold(
         topBar = {
@@ -90,12 +105,13 @@ fun AddMedicalRecordScreen(
                 .fillMaxSize()
                 .padding(paddingValues) // Terapkan padding dari Scaffold
                 .padding(16.dp) // Padding tambahan untuk konten form
-                .offset(y = (-30).dp), // Sesuaikan posisi ke atas
+                .offset(y = (-30).dp), // Sesuaikan posisi kolom sedikit ke atas
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Judul form dengan nama pasien
             Text(
-                text = "Form Rekam Medis Pasien ID: $pasienId",
+                text = "Form Rekam Medis Pasien: $patientName (ID: $pasienId)",
                 fontSize = 22.sp,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 24.dp)
@@ -106,10 +122,10 @@ fun AddMedicalRecordScreen(
                 value = keluhan,
                 onValueChange = { keluhan = it },
                 label = { Text("Keluhan") },
-//                leadingIcon = { Icon(Icons.Default.Description, contentDescription = "Keluhan Icon") },
+                leadingIcon = { Icon(Icons.Filled.Description, contentDescription = "Keluhan Icon") }, // Ikon Description
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 60.dp) // Minimal tinggi
+                    .heightIn(min = 60.dp) // Minimal tinggi TextField
                     .padding(vertical = 8.dp)
             )
 
@@ -118,7 +134,7 @@ fun AddMedicalRecordScreen(
                 value = diagnosa,
                 onValueChange = { diagnosa = it },
                 label = { Text("Diagnosa") },
-//                leadingIcon = { Icon(Icons.Default.MedicalServices, contentDescription = "Diagnosa Icon") },
+                leadingIcon = { Icon(Icons.Filled.MedicalServices, contentDescription = "Diagnosa Icon") }, // Ikon MedicalServices
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 60.dp)
@@ -130,7 +146,7 @@ fun AddMedicalRecordScreen(
                 value = tindakan,
                 onValueChange = { tindakan = it },
                 label = { Text("Tindakan") },
-//                leadingIcon = { Icon(Icons.Default.LocalHospital, contentDescription = "Tindakan Icon") },
+                leadingIcon = { Icon(Icons.Filled.Build, contentDescription = "Tindakan Icon") }, // Ikon Build
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 60.dp)
@@ -142,7 +158,7 @@ fun AddMedicalRecordScreen(
                 value = resep,
                 onValueChange = { resep = it },
                 label = { Text("Resep") },
-//                leadingIcon = { Icon(Icons.Default.Note, contentDescription = "Resep Icon") },
+                leadingIcon = { Icon(Icons.Filled.ReceiptLong, contentDescription = "Resep Icon") }, // Ikon ReceiptLong
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 60.dp)
@@ -154,10 +170,12 @@ fun AddMedicalRecordScreen(
             // Tombol Submit
             Button(
                 onClick = {
+                    // Validasi input form
                     if (keluhan.isBlank() || diagnosa.isBlank() || tindakan.isBlank() || resep.isBlank()) {
                         Toast.makeText(applicationContext, "Harap lengkapi semua bidang!", Toast.LENGTH_SHORT).show()
                         submitMessage = "Harap lengkapi semua bidang!"
                     } else {
+                        // Buat objek RekamMedis dari inputan
                         val rekamMedis = RekamMedis(
                             keluhan = keluhan,
                             diagnosa = diagnosa,
@@ -165,14 +183,13 @@ fun AddMedicalRecordScreen(
                             resep = resep
                         )
 
-                        // Panggil API untuk menambahkan rekam medis
+                        // Panggil API untuk menambahkan rekam medis (asinkron)
                         RetrofitAuth.instance.addRekamMedis(pasienId, rekamMedis).enqueue(object : Callback<RekamMedis> {
                             override fun onResponse(call: Call<RekamMedis>, response: Response<RekamMedis>) {
                                 if (response.isSuccessful) {
                                     Toast.makeText(applicationContext, "Rekam Medis berhasil ditambahkan!", Toast.LENGTH_LONG).show()
                                     submitMessage = "Rekam Medis berhasil ditambahkan!"
-                                    // Opsional: Kembali ke Home Screen atau tampilkan detail rekam medis yang baru
-                                    onBackClick() // Kembali ke layar sebelumnya
+                                    onBackClick() // Kembali ke layar sebelumnya setelah berhasil
                                 } else {
                                     val errorBody = response.errorBody()?.string()
                                     val errorMessage = try {
@@ -206,11 +223,14 @@ fun AddMedicalRecordScreen(
     }
 }
 
+/**
+ * Preview untuk AddMedicalRecordScreen Composable.
+ */
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun PreviewAddMedicalRecordScreen() {
     DMCTheme {
-        // ID Pasien dummy untuk preview
-        AddMedicalRecordScreen(pasienId = 123L)
+        // ID Pasien dan nama dummy untuk preview
+        AddMedicalRecordScreen(pasienId = 123L, patientName = "Nama Pasien Contoh")
     }
 }

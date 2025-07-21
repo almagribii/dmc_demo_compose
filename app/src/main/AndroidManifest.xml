@@ -43,6 +43,11 @@
             android:theme="@style/Theme.DMC" />
 
         <activity
+            android:name=".activity.DispenseMedicineActivity"
+            android:exported="false"
+            android:label="Jejak Rekam Medis"
+            android:theme="@style/Theme.DMC" />
+        <activity
             android:name=".activity.MedicalRecordsListActivity"
             android:exported="false"
             android:label="Jejak Rekam Medis"
