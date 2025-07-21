@@ -1,10 +1,7 @@
 package com.example.dmc.activity
 
-import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,10 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.DateRange // Untuk ikon Tanggal Lahir
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,16 +40,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dmc.api.Pasien // Import Pasien data class Anda
-import com.example.dmc.api.RegisterResponse // Import RegisterResponse (jika Anda pakai)
+import com.example.dmc.api.Pasien
+import com.example.dmc.api.RegisterResponse
 import com.example.dmc.ui.theme.DMCTheme
-import com.example.dmc.util.RetrofitAuth // Import RetrofitAuth
+import com.example.dmc.util.RetrofitAuth
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,9 +64,6 @@ class RegisterActivity : ComponentActivity() {
     }
 }
 
-// src/main/java/com/example/dmc/activity/RegisterActivity.kt
-// ... (imports lainnya) ...
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen() {
@@ -81,27 +72,29 @@ fun RegisterScreen() {
     var alamat by remember { mutableStateOf("") }
     var nomorTelepon by remember { mutableStateOf("") }
     var isMahasiswaUnida by remember { mutableStateOf(false) }
-    var nim by remember { mutableStateOf("") } // <-- Tetap String non-nullable
+    var nim by remember { mutableStateOf("") }
     var registerMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-//    val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+    val applicationContext = context.applicationContext // Ambil applicationContext yang stabil
 
-    val year: Int
-    val month: Int
-    val day: Int
-    val calendar = Calendar.getInstance()
-    year = calendar.get(Calendar.YEAR)
-    month = calendar.get(Calendar.MONTH)
-    day = calendar.get(Calendar.DAY_OF_MONTH)
+    // Date picker setup DIKOMENTARI
+    // val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+    // val year: Int
+    // val month: Int
+    // val day: Int
+    // val calendar = Calendar.getInstance()
+    // year = calendar.get(Calendar.YEAR)
+    // month = calendar.get(Calendar.MONTH)
+    // day = calendar.get(Calendar.DAY_OF_MONTH)
 
-//    val datePickerDialog = DatePickerDialog(
-//        context,
-//        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-//            tanggalLahir = LocalDate.of(selectedYear, selectedMonth + 1, selectedDayOfMonth)
-//                .format(dateFormatter)
-//        }, year, month, day
-//    )
+    // val datePickerDialog = DatePickerDialog(
+    //     context,
+    //     { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
+    //         tanggalLahir = LocalDate.of(selectedYear, selectedMonth + 1, selectedDayOfMonth)
+    //             .format(dateFormatter)
+    //     }, year, month, day
+    // )
 
     Column(
         modifier = Modifier
@@ -131,12 +124,13 @@ fun RegisterScreen() {
             value = tanggalLahir,
             onValueChange = { tanggalLahir = it },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            label = { Text("Tanggal Lahir (YYYY-MM-DD)") },
+            label = { Text("Tanggal Lahir (YYYY-MM-DD)") }, // Label informatif
             leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Date Icon") },
+            // readOnly = true, // DIKOMENTARI agar bisa input manual
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-//                .clickable { datePickerDialog.show() }
+            // .clickable { datePickerDialog.show() } // DIKOMENTARI
         )
 
         OutlinedTextField(
@@ -177,18 +171,17 @@ fun RegisterScreen() {
             Switch(
                 checked = isMahasiswaUnida,
                 onCheckedChange = { isMahasiswaUnida = it
-                    if (!it) { // Jika switch dimatikan, kosongkan NIM
+                    if (!it) {
                         nim = ""
                     }
                 }
             )
         }
 
-        // Input NIM (Hanya muncul jika isMahasiswaUnida true)
         if (isMahasiswaUnida) {
             OutlinedTextField(
-                value = nim, // Menggunakan state 'nim' yang sama
-                onValueChange = { nim = it }, // Update state 'nim'
+                value = nim,
+                onValueChange = { nim = it },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 label = { Text("NIM") },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = "NIM Icon") },
@@ -201,9 +194,8 @@ fun RegisterScreen() {
 
         Button(
             onClick = {
-                // Validasi yang lebih ketat: NIM tidak boleh kosong jika isMahasiswaUnida true
                 if (namaLengkap.isBlank() || tanggalLahir.isBlank() || alamat.isBlank() || nomorTelepon.isBlank() || (isMahasiswaUnida && nim.isBlank())) {
-                    Toast.makeText(context, "Harap lengkapi semua data dan NIM jika Anda mahasiswa!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "Harap lengkapi semua data dan NIM jika Anda mahasiswa!", Toast.LENGTH_LONG).show()
                     registerMessage = "Harap lengkapi semua data dan NIM jika Anda mahasiswa!"
                 } else {
                     val newPasien = Pasien(
@@ -212,7 +204,6 @@ fun RegisterScreen() {
                         alamat = alamat,
                         nomorTelepon = nomorTelepon,
                         isMahasiswaUnida = isMahasiswaUnida,
-                        // Jika isMahasiswaUnida false, kirim nim sebagai string kosong ""
                         nim = if (isMahasiswaUnida) nim else ""
                     )
 
@@ -221,7 +212,7 @@ fun RegisterScreen() {
                             if (response.isSuccessful) {
                                 val registeredPasien = response.body()
                                 registeredPasien?.let {
-                                    Toast.makeText(context, "Registrasi Berhasil! ID Pasien: ${it.id}", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(applicationContext, "Registrasi Berhasil! ID Pasien: ${it.id}", Toast.LENGTH_LONG).show()
                                     registerMessage = "Registrasi Berhasil!"
                                     val intent = Intent(context, LoginActivity::class.java)
                                     context.startActivity(intent)
@@ -235,14 +226,14 @@ fun RegisterScreen() {
                                 } catch (e: Exception) {
                                     "Registrasi gagal. Server tidak merespons dengan benar."
                                 }
-                                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                                Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_LONG).show()
                                 registerMessage = errorMessage
                                 println("Register Error: ${response.code()} - $errorBody")
                             }
                         }
 
                         override fun onFailure(call: Call<Pasien>, t: Throwable) {
-                            Toast.makeText(context, "Error jaringan: ${t.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, "Error jaringan: ${t.message}", Toast.LENGTH_LONG).show()
                             registerMessage = "Error jaringan: ${t.message}"
                             t.printStackTrace()
                         }

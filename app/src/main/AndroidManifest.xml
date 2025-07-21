@@ -30,6 +30,24 @@
         <activity android:name=".activity.RegisterActivity"/>
         <activity android:name=".activity.LoginActivity"/>
         <activity android:name=".activity.HomeActivity"/>
+        <activity
+            android:name=".activity.AddMedicalRecordActivity"
+            android:exported="false"
+            android:label="Tambah Rekam Medis"
+            android:theme="@style/Theme.DMC" />
+
+        <activity
+            android:name=".activity.MedicineInfoActivity"
+            android:exported="false"
+            android:label="Informasi Obat"
+            android:theme="@style/Theme.DMC" />
+
+        <activity
+            android:name=".activity.MedicalRecordsListActivity"
+            android:exported="false"
+            android:label="Jejak Rekam Medis"
+            android:theme="@style/Theme.DMC" />
+
     </application>
 
 </manifest>

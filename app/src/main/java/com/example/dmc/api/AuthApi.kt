@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.Call
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface AuthApi {
     @POST ("auth/login")
@@ -13,6 +14,15 @@ interface AuthApi {
 
     @POST("pasien")
     fun registerPasien(@Body pasien: Pasien): Call<Pasien>
+
+    @POST("rekam-medis/{id}")
+    fun addRekamMedis(@Path("id") pasienId: Long, @Body rekamMedis: RekamMedis): Call<RekamMedis>
+
+    @GET("obat")
+    fun getObat() : Call<List<Obat>>
+
+    @GET("rekam-medis/{pasienId}")
+    fun getRekamMedisByPasienId(@Path("pasienId") pasienId: Long) : Call<List<RekamMedis>>
 }
 
 data class Pasien(
@@ -31,11 +41,18 @@ data class LoginRequest(
 )
 
 data class RekamMedis(
-    val keluhan : String,
-    val diagnosa : String,
-    val tindakan : String,
-    val resep : String
+    val id: Long? = null,
+    val keluhan: String,
+    val diagnosa: String,
+    val tindakan: String,
+    val resep: String,
+    // Pastikan Pasien data class diimport di sini jika Anda menggunakannya
+    val pasien: Pasien? = null,
+    val tanggalKonsultasi: String? = null, // <--- KEMBALIKAN MENJADI String?
+    @SerializedName("createdAt") val createdAt: String? = null, // <--- KEMBALIKAN MENJADI String?
+    @SerializedName("updatedAt") val updatedAt: String? = null // <--- KEMBALIKAN MENJADI String?
 )
+
 
 data class Obat(
     val id : Long,
