@@ -173,7 +173,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .width(150.dp)
-                                .offset(y = 20.dp, x = (-10).dp),
+                                ,
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
