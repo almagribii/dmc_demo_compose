@@ -62,7 +62,6 @@
 4. **Visit the app**
     Open http://localhost:3000 in your browser
 
-
 ## 📜 License
     
     This project is open source under the MIT License — built and maintained with ❤️ by @naufalharitsprasetia
